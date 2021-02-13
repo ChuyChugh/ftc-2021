@@ -27,12 +27,11 @@ public class AdvancedAutoControlled extends LinearOpMode {
         backLeft = new Motor(hardwareMap, "bR");
         shooter = new Motor(hardwareMap, "shooter");
         intake = new Motor(hardwareMap, "intake");
-        arm = new Motor(hardwareMap, "grabberLift");
-        grabber = new SimpleServo(hardwareMap, "grabber");
-        flicker = new SimpleServo(hardwareMap, "flicker");
+        grabber = new SimpleServo(hardwareMap, "grabber", -90, 180);
+        flicker = new SimpleServo(hardwareMap, "flicker", -90, 180);
         imu = new RevIMU(hardwareMap, "imu");
 
-        AutoCommands robot = new AutoCommands(frontLeft, frontRight, backLeft, backRight, shooter, intake, arm, grabber, flicker, imu);
+        AutoCommands robot = new AutoCommands(frontLeft, frontRight, backLeft, backRight, shooter, intake, grabber, flicker, imu);
         robot.initializeAdvancedAuto();
 
         waitForStart();

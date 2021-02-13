@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.Autonomous.AutoControlled;
 
 public class AutoCommands extends AutoControlled {
     private Motor fL, fR, bL, bR;
-    private Motor shooter, intake, lift;
-    private CRServo flicker;
+    private Motor shooter, intake;
+    private SimpleServo flicker;
     private SimpleServo grabber, pusher;
     private VoltageSensor voltageSensor;
     private RevIMU imu;
@@ -23,7 +23,7 @@ public class AutoCommands extends AutoControlled {
     public double kI = 0.001;
     public double kD = 0;
 
-    public AutoCommands(Motor fLM, Motor fRM, Motor bLM, Motor bRM, Motor shooterM, Motor intakeM, Motor lifter, SimpleServo grab, CRServo flick, VoltageSensor volt, RevIMU imuParam){
+    public AutoCommands(Motor fLM, Motor fRM, Motor bLM, Motor bRM, Motor shooterM, Motor intakeM, SimpleServo grab, SimpleServo flick, VoltageSensor volt, RevIMU imuParam){
         fL = fLM;
         fR = fRM;
         bL = bLM;
@@ -31,21 +31,19 @@ public class AutoCommands extends AutoControlled {
         shooter = shooterM;
         intake = intakeM;
         voltageSensor = volt;
-        lift = lifter;
         grabber = grab;
         flicker = flick;
         imu = imuParam;
         pid = new PIDController(kP, kI, kD);
     }
 
-    public AutoCommands(Motor fLM, Motor fRM, Motor bLM, Motor bRM, Motor shooterM, Motor intakeM, Motor lifter, SimpleServo grab, SimpleServo flick, RevIMU imuParam){
+    public AutoCommands(Motor fLM, Motor fRM, Motor bLM, Motor bRM, Motor shooterM, Motor intakeM, SimpleServo grab, SimpleServo flick, RevIMU imuParam){
         fL = fLM;
         fR = fRM;
         bL = bLM;
         bR = bRM;
         shooter = shooterM;
         intake = intakeM;
-        lift = lifter;
         grabber = grab;
         pusher = flick;
         imu = imuParam;
@@ -62,15 +60,12 @@ public class AutoCommands extends AutoControlled {
         fR.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bL.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bR.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lift.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         fL.set(0);
         fR.set(0);
         bL.set(0);
         bR.set(0);
-        lift.set(0);
         shooter.set(0);
-        grabber.setPosition(0);
 
         imu.init();
         imu.reset();
@@ -86,18 +81,15 @@ public class AutoCommands extends AutoControlled {
         fR.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bL.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bR.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lift.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         fL.set(0);
         fR.set(0);
         bL.set(0);
         bR.set(0);
-        lift.set(0);
         shooter.set(0);
         intake.set(0);
 
-        grabber.setPosition(0);
         pusher.setPosition(0);
 
         imu.init();
@@ -112,25 +104,7 @@ public class AutoCommands extends AutoControlled {
     }
 
     public void dropWobbleGoal(){
-        lift.set((13/voltageSensor.getVoltage()) * 0.4);
-        sleep(500);
-        lift.set(0);
-        grabber.setPosition(1);
-        sleep(400);
-        lift.set((13/voltageSensor.getVoltage()) * -0.5);
-        sleep(1000);
-        lift.set(0);
-    }
-
-    public void pickUpWobbleGoal(){
-        lift.set((13/voltageSensor.getVoltage()) * 0.4);
-        sleep(500);
-        lift.set(0);
         grabber.setPosition(0);
-        sleep(1000);
-        lift.set((13/voltageSensor.getVoltage()) * -0.5);
-        sleep(1000);
-        lift.set(0);
     }
 
     public void setTargetInches(double inchesFL, double inchesFR, double inchesBL, double inchesBR){
@@ -179,19 +153,12 @@ public class AutoCommands extends AutoControlled {
         }
         double counter = 0;
         while (counter < 3 && opModeIsActive()){
-            flicker.set(0);
+            flicker.setPosition(1);
             sleep(300);
-            flicker.set(-1);
+            flicker.setPosition(0.5);
             sleep(300);
-            flicker.set(0);
-            sleep(300);
-            flicker.set(1);
-            sleep(300);
-            flicker.set(0);
-            sleep(1000);
             counter++;
         }
-
         shooter.set(0);
     }
 

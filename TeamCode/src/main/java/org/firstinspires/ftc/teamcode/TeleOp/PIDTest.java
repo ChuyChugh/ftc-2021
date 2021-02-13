@@ -35,7 +35,7 @@ public class PIDTest extends LinearOpMode {
         shooter = new Motor(hardwareMap, "shooter");
         flicker = new CRServo(hardwareMap, "flicker");
         grabberLift = new Motor(hardwareMap, "grabberLift");
-        grabber = new SimpleServo(hardwareMap, "grabber");
+        grabber = new SimpleServo(hardwareMap, "grabber", -90, 180);
 
         imu = new RevIMU(hardwareMap, "imu");
 

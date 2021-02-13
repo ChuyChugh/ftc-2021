@@ -13,11 +13,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(name="FINAL TELEOP")
 public class RealTeleOp extends LinearOpMode {
@@ -30,9 +25,8 @@ public class RealTeleOp extends LinearOpMode {
     private MecanumDrive drive;
     private VoltageSensor voltageSensor;
     private GamepadEx gamepad;
-    private ButtonReader flickerController, incSpeedController, decSpeedController, shootPositionController;
+    private ButtonReader flickerController, incSpeedController, decSpeedController;
     private ToggleButtonReader gearboxController, hopperController, grabberController;
-    private double speedMultiplier;
 
     @Override
 
@@ -43,28 +37,26 @@ public class RealTeleOp extends LinearOpMode {
         bL = new Motor(hardwareMap, "bL");
         bR = new Motor(hardwareMap, "bR");
         drive = new MecanumDrive(fL, fR, bL, bR);
-        SampleMecanumDrive driveRR = new SampleMecanumDrive(hardwareMap);
-        driveRR.setPoseEstimate(new Pose2d(-24, 9, Math.toRadians(90)));
+
 
         shooterF = new MotorEx(hardwareMap, "shooterF");
         shooterB = new MotorEx(hardwareMap, "shooterB");
         intake = new Motor(hardwareMap, "intake");
 
-        flicker = new SimpleServo(hardwareMap, "flicker");
-        hopper = new SimpleServo(hardwareMap, "hopper");
-        grabber = new SimpleServo(hardwareMap, "grabber");
-        gearboxL = new SimpleServo(hardwareMap, "gearboxL");
-        gearboxR = new SimpleServo(hardwareMap, "gearboxR");
-
+        flicker = new SimpleServo(hardwareMap, "flicker", -90,90);
+        hopper = new SimpleServo(hardwareMap, "hopper", -90, 180);
+        grabber = new SimpleServo(hardwareMap, "grabber", -90, 180);
+        gearboxL = new SimpleServo(hardwareMap, "gearboxL", -90, 180);
+        gearboxR = new SimpleServo(hardwareMap, "gearboxR",-90,180);
+        gamepad = new GamepadEx(gamepad1);
         incSpeedController = new ButtonReader(gamepad, GamepadKeys.Button.DPAD_UP);
         decSpeedController = new ButtonReader(gamepad, GamepadKeys.Button.DPAD_DOWN);
-        shootPositionController = new ButtonReader(gamepad, GamepadKeys.Button.DPAD_LEFT);
-        flickerController = new ButtonReader(gamepad, GamepadKeys.Button.LEFT_BUMPER);
+        flickerController = new ButtonReader(gamepad, GamepadKeys.Button.X);
         gearboxController = new ToggleButtonReader(gamepad, GamepadKeys.Button.A);
         grabberController = new ToggleButtonReader(gamepad, GamepadKeys.Button.B);
         hopperController = new ToggleButtonReader(gamepad, GamepadKeys.Button.Y);
 
-        gamepad = new GamepadEx(gamepad1);
+
         time = new ElapsedTime();
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
         flicker.setInverted(true);
@@ -78,35 +70,27 @@ public class RealTeleOp extends LinearOpMode {
         bR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
         intake.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        shooterF.setRunMode(Motor.RunMode.VelocityControl);
-        shooterB.setRunMode(Motor.RunMode.VelocityControl);
-        shooterF.setVeloCoefficients(0, 0, 0);
-        shooterB.setVeloCoefficients(0, 0, 0);
-
-        hopper.setPosition(1-(30.0/270));
-        gearboxR.setPosition(0.5);
-        gearboxL.setPosition(0.5);
+        hopper.setPosition(1-(35.0/270));
+        gearboxR.setPosition(0.4);
+        gearboxL.setPosition(0.4);
         grabber.setPosition(0);
 
         waitForStart();
 
-        speedMultiplier = 0.5;
 
         fL.resetEncoder();
         fR.resetEncoder();
         bL.resetEncoder();
         bR.resetEncoder();
         fR.encoder.setDirection(Motor.Direction.REVERSE);
-
-        telemetry.addData("Speed Multiplier", speedMultiplier);
         telemetry.update();
 
         while(opModeIsActive() && !isStopRequested()){
 
             drive.driveRobotCentric(
-                    -gamepad.getLeftX() * speedMultiplier,
-                    -gamepad.getLeftY() * speedMultiplier,
-                    -gamepad.getRightX() * 0.75 * speedMultiplier
+                    -gamepad.getLeftX() * 1.5,
+                    -gamepad.getLeftY(),
+                    -gamepad.getRightX() * 0.75, true
             );
 
             if (gamepad.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
@@ -127,46 +111,34 @@ public class RealTeleOp extends LinearOpMode {
             }
 
             if (hopperController.getState()) {
-                hopper.setPosition(1-(30.0/270));
+                hopper.setPosition(1-(35.0/270));
             } else {
                 hopper.setPosition(1);
             }
 
             if (gearboxController.getState()) {
-                gearboxL.setPosition(1.0);
-                gearboxR.setPosition(1.0);
+                gearboxL.setPosition(0.67);
+                gearboxR.setPosition(0.67);
             } else {
-                gearboxL.setPosition(0.5);
-                gearboxR.setPosition(0.5);
+                gearboxL.setPosition(0.1);
+                gearboxR.setPosition(0.1);
             }
 
             if (grabberController.getState()) {
-                grabber.setPosition(0.5);
+                grabber.setPosition(0.6);
             } else {
                 grabber.setPosition(0);
             }
 
-            if (incSpeedController.wasJustPressed() && speedMultiplier < 1) {
-                speedMultiplier += 0.25;
-                telemetry.addData("Speed Multiplier", speedMultiplier);
-                telemetry.update();
-            }
-            if (decSpeedController.wasJustPressed() && speedMultiplier > 0) {
-                speedMultiplier -= 0.25;
-                telemetry.addData("Speed Multiplier", speedMultiplier);
-                telemetry.update();
-            }
-
-            if (shootPositionController.wasJustPressed()){
-                Trajectory path = driveRR.trajectoryBuilder(new Pose2d())
-                        .lineToSplineHeading(new Pose2d(-36, 63, Math.toRadians(90)))
-                        .build();
-                driveRR.followTrajectory(path);
-            }
-
+            telemetry.addData("Poopy left", fL.getCurrentPosition());
+            telemetry.addData("Poopy right", fR.getCurrentPosition());
+            telemetry.addData("Poopy center", bL.getCurrentPosition());
+            telemetry.update();
             hopperController.readValue();
             gearboxController.readValue();
             grabberController.readValue();
+            incSpeedController.readValue();
+            flickerController.readValue();
         }
     }
 }
