@@ -114,7 +114,6 @@ public class PIDTune extends LinearOpMode {
             telemetry.addData("I Constant", i);
             telemetry.addData("D Constant", d);
             telemetry.update();
-            sleep(3000);
        }
     }
 }
