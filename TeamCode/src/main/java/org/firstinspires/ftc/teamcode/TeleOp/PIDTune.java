@@ -92,7 +92,7 @@ public class PIDTune extends LinearOpMode {
             }
             if (incrementUp.wasJustPressed()) {
                 increment = 0.1;
-                just_pressed = true;
+                just_pressed = true;zz
             }
 
             shooterB.resetEncoder();
@@ -101,12 +101,12 @@ public class PIDTune extends LinearOpMode {
             long startTime = System.currentTimeMillis();
             long elapsedTime = 0L;
 
-            while (just_pressed && elapsedTime < 1000 && opModeIsActive() && !isStopRequested()) {
+            while (just_pressed && elapsedTime < 1000 && opModeIsActive() && !isStopRequested()){
                 elapsedTime = (new Date()).getTime() - startTime;
             }
 
             just_pressed = false;
-            
+
             telemetry.addData("Ticks Per Second Back", shooterB.getCurrentPosition());
             telemetry.addData("Ticks Per Second Front", shooterF.getCurrentPosition());
             telemetry.addData("Increment Level", increment);
