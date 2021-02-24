@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class RealTeleOp extends LinearOpMode {
 
     private Motor fL, fR, bL, bR, intake;
-    private MotorEx shooterF, shooterB;
+    private Motor shooterF, shooterB;
     private SimpleServo hopper, flicker,grabber, gearboxL, gearboxR;
     private ElapsedTime time;
     private RevIMU imu;
