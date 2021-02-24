@@ -38,7 +38,7 @@ public class PIDTune extends LinearOpMode {
         bL = new Motor(hardwareMap, "bL");
         bR = new Motor(hardwareMap, "bR");
         drive = new MecanumDrive(fL, fR, bL, bR);
-
+        gamepad = new GamepadEx(gamepad1);
 
         shooterF = new MotorEx(hardwareMap, "shooterF");
         shooterB = new MotorEx(hardwareMap, "shooterB");
@@ -129,11 +129,11 @@ public class PIDTune extends LinearOpMode {
                 shooterB.setVeloCoefficients(p, i , d);
                 just_pressed = true;
             }
-            if (gamepad1.a){
+            if (incrementDown.wasJustPressed()){
                 increment = 0.01;
                 just_pressed = true;
             }
-            if (gamepad1.b) {
+            if (incrementUp.wasJustPressed()) {
                 increment = 0.1;
                 just_pressed = true;
             }
@@ -147,7 +147,7 @@ public class PIDTune extends LinearOpMode {
             while (just_pressed && elapsedTime < 1000 && opModeIsActive() && !isStopRequested()){
                 elapsedTime = (new Date()).getTime() - startTime;
             }
-            
+
             just_pressed = false;
 
             telemetry.addData("Ticks Per Second Back", shooterB.getCurrentPosition());
