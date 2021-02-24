@@ -7,7 +7,6 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -39,8 +38,8 @@ public class RealTeleOp extends LinearOpMode {
         drive = new MecanumDrive(fL, fR, bL, bR);
 
 
-        shooterF = new MotorEx(hardwareMap, "shooterF");
-        shooterB = new MotorEx(hardwareMap, "shooterB");
+        shooterF = new Motor(hardwareMap, "shooterF");
+        shooterB = new Motor(hardwareMap, "shooterB");
         intake = new Motor(hardwareMap, "intake");
 
         flicker = new SimpleServo(hardwareMap, "flicker", -90,90);
