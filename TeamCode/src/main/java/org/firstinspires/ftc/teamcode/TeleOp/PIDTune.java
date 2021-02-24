@@ -27,8 +27,7 @@ public class PIDTune extends LinearOpMode {
     private MecanumDrive drive;
     private VoltageSensor voltageSensor;
     private GamepadEx gamepad;
-    private ButtonReader flickerController, incSpeedController, decSpeedController;
-    private ToggleButtonReader gearboxController, hopperController, grabberController;
+    private ButtonReader incrementUp, incrementDown, pUp, pDown, iUp, iDown, dUp, dDown;
 
     @Override
 
@@ -68,6 +67,15 @@ public class PIDTune extends LinearOpMode {
         gearboxL.setPosition(0.4);
         grabber.setPosition(0);
 
+        pUp = new ButtonReader(gamepad, GamepadKeys.Button.DPAD_UP);
+        pDown = new ButtonReader(gamepad, GamepadKeys.Button.DPAD_DOWN);
+        iUp = new ButtonReader(gamepad, GamepadKeys.Button.DPAD_RIGHT);
+        iDown = new ButtonReader(gamepad, GamepadKeys.Button.DPAD_LEFT);
+        dUp = new ButtonReader(gamepad, GamepadKeys.Button.RIGHT_BUMPER);
+        dDown = new ButtonReader(gamepad, GamepadKeys.Button.LEFT_BUMPER);
+        incrementUp = new ButtonReader(gamepad, GamepadKeys.Button.A);
+        incrementDown = new ButtonReader(gamepad, GamepadKeys.Button.B);
+
         waitForStart();
 
         shooterF.setRunMode(Motor.RunMode.VelocityControl);
@@ -82,59 +90,66 @@ public class PIDTune extends LinearOpMode {
         double i = 0;
         double d = 0;
         double increment = 0.1;
-        while(opModeIsActive() && !isStopRequested()){
+        boolean just_pressed = false;
 
-            if (gamepad1.dpad_up){
+        while(opModeIsActive() && !isStopRequested()){
+            if (pUp.wasJustPressed()){
                 p += increment;
                 shooterF.setVeloCoefficients(p, i , d);
                 shooterB.setVeloCoefficients(p, i , d);
-                sleep(500);
+                just_pressed = true;
             }
-            if (gamepad1.dpad_down){
+            if (pDown.wasJustPressed()){
                 p -= increment;
                 shooterF.setVeloCoefficients(p, i , d);
                 shooterB.setVeloCoefficients(p, i , d);
-                sleep(500);
+                just_pressed = true;
             }
-            if (gamepad1.dpad_left){
+            if (iUp.wasJustPressed()){
                 i -= increment;
                 shooterF.setVeloCoefficients(p, i , d);
                 shooterB.setVeloCoefficients(p, i , d);
-                sleep(500);
+                just_pressed = true;
             }
-            if (gamepad1.dpad_right){
+            if (iDown.wasJustPressed()){
                 i += increment;
                 shooterF.setVeloCoefficients(p, i , d);
                 shooterB.setVeloCoefficients(p, i , d);
-                sleep(500);
+                just_pressed = true;
             }
-            if (gamepad1.left_bumper){
+            if (dUp.wasJustPressed()){
                 d -= increment;
                 shooterF.setVeloCoefficients(p, i , d);
                 shooterB.setVeloCoefficients(p, i , d);
-                sleep(500);
+                just_pressed = true;
             }
-            if (gamepad1.right_bumper){
+            if (dDown.wasJustPressed()){
                 d += increment;
                 shooterF.setVeloCoefficients(p, i , d);
                 shooterB.setVeloCoefficients(p, i , d);
-                sleep(500);
+                just_pressed = true;
             }
             if (gamepad1.a){
                 increment = 0.01;
+                just_pressed = true;
             }
             if (gamepad1.b) {
                 increment = 0.1;
+                just_pressed = true;
             }
 
             shooterB.resetEncoder();
             shooterF.resetEncoder();
+
             long startTime = System.currentTimeMillis();
             long elapsedTime = 0L;
 
-            while (elapsedTime < 1000 && opModeIsActive() && !isStopRequested()){
+            while (just_pressed && elapsedTime < 1000 && opModeIsActive() && !isStopRequested()){
                 elapsedTime = (new Date()).getTime() - startTime;
             }
+            
+            just_pressed = false;
+
             telemetry.addData("Ticks Per Second Back", shooterB.getCurrentPosition());
             telemetry.addData("Ticks Per Second Front", shooterF.getCurrentPosition());
             telemetry.addData("Increment Level", increment);
@@ -145,5 +160,3 @@ public class PIDTune extends LinearOpMode {
        }
     }
 }
-
-
