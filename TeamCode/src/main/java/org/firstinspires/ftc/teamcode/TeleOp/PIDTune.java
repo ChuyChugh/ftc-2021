@@ -92,7 +92,7 @@ public class PIDTune extends LinearOpMode {
             }
             if (incrementUp.wasJustPressed()) {
                 increment = 0.1;
-                just_pressed = true;zz
+                just_pressed = true;
             }
 
             shooterB.resetEncoder();
