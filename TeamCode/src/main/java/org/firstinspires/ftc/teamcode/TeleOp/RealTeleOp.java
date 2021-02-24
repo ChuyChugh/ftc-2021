@@ -70,7 +70,7 @@ public class RealTeleOp extends LinearOpMode {
         bR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
         intake.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        hopper.setPosition(1-(35.0/270));
+        hopper.setPosition(1-(40.0/270));
         gearboxR.setPosition(0.4);
         gearboxL.setPosition(0.4);
         grabber.setPosition(0);
@@ -88,21 +88,25 @@ public class RealTeleOp extends LinearOpMode {
         while(opModeIsActive() && !isStopRequested()){
 
             drive.driveRobotCentric(
-                    -gamepad.getLeftX() * 1.5,
+                    -gamepad.getLeftX(),
                     -gamepad.getLeftY(),
-                    -gamepad.getRightX() * 0.75, true
+                    -gamepad.getRightX(), true
             );
 
-            if (gamepad.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-                shooterB.set(0.75);
-                shooterF.set(0.75);
+            if (gamepad.getButton(GamepadKeys.Button.DPAD_UP)) {
+                shooterB.set(1);
+                shooterF.set(1);
             } else {
                 shooterB.set(0);
                 shooterF.set(0);
             }
-
-            intake.set(-gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
-            intake.set(gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
+            if(gamepad.getButton(GamepadKeys.Button.RIGHT_BUMPER)){
+                intake.set(1);
+            }else if(gamepad.getButton(GamepadKeys.Button.LEFT_BUMPER)){
+                intake.set(-1);
+            }else{
+                intake.set(0);
+            }
 
             if (flickerController.wasJustPressed()) {
                 flicker.setPosition(1);
@@ -111,14 +115,14 @@ public class RealTeleOp extends LinearOpMode {
             }
 
             if (hopperController.getState()) {
-                hopper.setPosition(1-(35.0/270));
+                hopper.setPosition(1-(40.0/270));
             } else {
                 hopper.setPosition(1);
             }
 
             if (gearboxController.getState()) {
-                gearboxL.setPosition(0.67);
-                gearboxR.setPosition(0.67);
+                gearboxL.setPosition(0.85);
+                gearboxR.setPosition(0.85);
             } else {
                 gearboxL.setPosition(0.1);
                 gearboxR.setPosition(0.1);
